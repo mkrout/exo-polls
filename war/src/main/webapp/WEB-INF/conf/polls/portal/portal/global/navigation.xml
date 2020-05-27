@@ -7,7 +7,6 @@
         <node>
             <name>polls</name>
             <label>Polls</label>
-            <visibility>SYSTEM</visibility>
             <page-reference>portal::global::polls_management</page-reference>
         </node>
     </page-nodes>
