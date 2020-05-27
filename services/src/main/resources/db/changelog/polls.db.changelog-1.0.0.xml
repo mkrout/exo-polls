@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="autoIncrement" value="true" dbms="mysql,mssql,h2,sybase,db2,hsqldb"/>
+    <property name="autoIncrement" value="false" dbms="oracle,postgresql"/>
+
+    <changeSet author="exo-polls" id="1.0.0-1">
+        <createTable tableName="ADDONS_POLL_POLL">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_POLL"/>
+            </column>
+            <column name="NAME" type="NVARCHAR(256)">
+            </column>
+            <column name="DESCRIPTION" type="NVARCHAR(255)">
+            </column>
+            <column name="CREATED_DATE" type="TIMESTAMP">
+            </column>
+            <column name="PUBLICATION_DATE" type="TIMESTAMP">
+            </column>
+            <column name="EXPIRATION_DATE" type="TIMESTAMP">
+            </column>
+            <column name="ACTIVE" type="BOOLEAN">
+            </column>
+            <column name="USER_NAME" type="NVARCHAR(200)">
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="exo-polls" id="1.0.0-2" dbms="postgresql">
+        <createSequence sequenceName="SEQ_ADDONS_POLL_POLL_ID" startValue="1"/>
+    </changeSet>
+
+</databaseChangeLog>
+
+
