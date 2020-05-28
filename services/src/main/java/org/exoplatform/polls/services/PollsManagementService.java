@@ -1,7 +1,10 @@
 package org.exoplatform.polls.services;
 
+import static org.exoplatform.polls.Utils.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.exoplatform.polls.dao.PollDAO;
@@ -30,6 +33,14 @@ public class PollsManagementService {
     }
 
     public PollDTO addPolls(PollDTO pollDTO) {
+        pollDTO.setCreatedDate(new Date());
+        try {
+            pollDTO.setPublicationDate(formatter.parse(pollDTO.getPublicationDateFormatted()));
+            pollDTO.setExpirationDate(formatter.parse(pollDTO.getExpirationDateFormatted()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return toPollDTO(pollDAO.create(toPollEntity(pollDTO)));
     }
 
@@ -65,6 +76,9 @@ public class PollsManagementService {
         pollDTO.setCreatedDate(pollEntity.getCreatedDate());
         pollDTO.setExpirationDate(pollEntity.getExpirationDate());
         pollDTO.setPublicationDate(pollEntity.getPublicationDate());
+        pollDTO.setCreatedDateFormatted(formatter.format(pollEntity.getCreatedDate()));
+        pollDTO.setExpirationDateFormatted(formatter.format(pollEntity.getExpirationDate()));
+        pollDTO.setPublicationDateFormatted(formatter.format(pollEntity.getPublicationDate()));
         pollDTO.setUserName(pollEntity.getUserName());
         pollDTO.setDescription(pollEntity.getDescription());
         return pollDTO;
