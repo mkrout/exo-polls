@@ -9,7 +9,7 @@ endif::[]
 :project-branch: master
 :ci-job-name: addons-community/addon-eXo Lead Capture Addon-{project-branch}-ci
 
-eXo Addon for Lead Capture and management
+eXo Addon for Polls management
 
 [NOTE]
 --
