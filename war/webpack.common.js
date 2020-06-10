@@ -1,5 +1,7 @@
 const path = require('path');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+// change the server path to your server locati/on path
+const exoServerPath = "E:/eXo/Servers/platform-6.0.0-M34/";
 
 const config = {
     context: path.resolve(__dirname, '.'),

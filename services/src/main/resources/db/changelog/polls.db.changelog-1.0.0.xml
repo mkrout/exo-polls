@@ -34,6 +34,45 @@
         <createSequence sequenceName="SEQ_ADDONS_POLL_POLL_ID" startValue="1"/>
     </changeSet>
 
+
+    <changeSet author="exo-polls" id="1.0.0-3">
+        <createTable tableName="ADDONS_POLL_QUESTION">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_QUESTION"/>
+            </column>
+            <column name="QUESTION" type="NVARCHAR(256)">
+            </column>
+            <column name="POLL_POLL_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_POLL_POLL_QUESTION"
+                             references="ADDONS_POLL_POLL(ID)"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="exo-polls" id="1.0.0-4" dbms="postgresql">
+        <createSequence sequenceName="SEQ_ADDONS_POLL_QUESTION_ID" startValue="1"/>
+    </changeSet>
+
+
+    <changeSet author="exo-polls" id="1.0.0-5">
+        <createTable tableName="ADDONS_POLL_RESPONSE">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_RESPONSE"/>
+            </column>
+            <column name="RESPONSE" type="NVARCHAR(256)">
+            </column>
+            <column name="POLL_QUESTION_ID" type="BIGINT">
+            <constraints nullable="false" foreignKeyName="FK_POLL_QUESTION_RESPONSE"
+                         references="ADDONS_POLL_QUESTION(ID)"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="exo-polls" id="1.0.0-6" dbms="postgresql">
+        <createSequence sequenceName="SEQ_ADDONS_POLL_QUESTION_ID" startValue="1"/>
+    </changeSet>
 </databaseChangeLog>
 
 

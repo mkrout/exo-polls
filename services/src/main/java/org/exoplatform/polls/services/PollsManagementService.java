@@ -1,15 +1,17 @@
 package org.exoplatform.polls.services;
 
-import static org.exoplatform.polls.Utils.*;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import com.sun.mail.iap.Response;
 import org.exoplatform.polls.dao.PollDAO;
 import org.exoplatform.polls.dto.PollDTO;
+import org.exoplatform.polls.dto.QuestionDTO;
+import org.exoplatform.polls.dto.ResponseDTO;
 import org.exoplatform.polls.entity.PollEntity;
+import org.exoplatform.polls.entity.QuestionEntity;
+import org.exoplatform.polls.entity.ResponseEntity;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -18,6 +20,7 @@ public class PollsManagementService {
     private final Log LOG = ExoLogger.getLogger(PollsManagementService.class);
 
     private PollDAO pollDAO;
+    private ResponseEntity responseEntity;
 
     public PollsManagementService(PollDAO pollDAO) {
         this.pollDAO = pollDAO;
@@ -33,14 +36,6 @@ public class PollsManagementService {
     }
 
     public PollDTO addPolls(PollDTO pollDTO) {
-        pollDTO.setCreatedDate(new Date());
-        try {
-            pollDTO.setPublicationDate(formatter.parse(pollDTO.getPublicationDateFormatted()));
-            pollDTO.setExpirationDate(formatter.parse(pollDTO.getExpirationDateFormatted()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
         return toPollDTO(pollDAO.create(toPollEntity(pollDTO)));
     }
 
@@ -76,9 +71,6 @@ public class PollsManagementService {
         pollDTO.setCreatedDate(pollEntity.getCreatedDate());
         pollDTO.setExpirationDate(pollEntity.getExpirationDate());
         pollDTO.setPublicationDate(pollEntity.getPublicationDate());
-        pollDTO.setCreatedDateFormatted(formatter.format(pollEntity.getCreatedDate()));
-        pollDTO.setExpirationDateFormatted(formatter.format(pollEntity.getExpirationDate()));
-        pollDTO.setPublicationDateFormatted(formatter.format(pollEntity.getPublicationDate()));
         pollDTO.setUserName(pollEntity.getUserName());
         pollDTO.setDescription(pollEntity.getDescription());
         return pollDTO;
@@ -95,6 +87,49 @@ public class PollsManagementService {
         pollEntity.setUserName(pollDTO.getUserName());
         pollEntity.setDescription(pollDTO.getDescription());
         return pollEntity;
+    }
+
+    public QuestionDTO toQuestioDTO(QuestionEntity questionEntity) {
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setId(questionEntity.getId());
+        questionDTO.setQuestion(questionEntity.getQuestion());
+        questionDTO.setPoll(toPollDTO(questionEntity.getPollEntity()));
+        return questionDTO;
+    }
+
+    public QuestionEntity toQuestionEntity(QuestionDTO questionDTO) {
+        QuestionEntity questionEntity = new QuestionEntity();
+        questionEntity.setId(questionDTO.getId());
+        questionEntity.setQuestion(questionDTO.getQuestion());
+        PollEntity pollEntity=this.pollfromlongID(questionDTO.getId());
+        questionEntity.setPollEntity(pollEntity);
+        return questionEntity;
+    }
+    public PollEntity pollfromlongID (Long id){
+        PollEntity poll=new PollEntity();
+        poll.setId(id);
+        return poll ;
+    }
+    public ResponseDTO toResponseDTO(ResponseEntity responseEntity) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setId( responseEntity.getId());
+        responseDTO.setResponse( responseEntity.getResponse());
+        responseDTO.setQuestion(toQuestioDTO(responseEntity.getQuestionEntity()));
+        return responseDTO;
+    }
+
+    public ResponseEntity toQResponseEntity(ResponseDTO responseDTO) {
+        ResponseEntity responseEntity = new ResponseEntity();
+        responseEntity.setId(responseDTO.getId());
+        responseEntity.setResponse(responseDTO.getResponse());
+        QuestionEntity questionEntity=this.questionfromlongID(responseDTO.getId());
+        responseEntity.setQuestionEntity(questionEntity);
+        return responseEntity;
+    }
+    public QuestionEntity questionfromlongID (Long id){
+        QuestionEntity question=new QuestionEntity();
+        question.setId(id);
+        return question ;
     }
 
 }
