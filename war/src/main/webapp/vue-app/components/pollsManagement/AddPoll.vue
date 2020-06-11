@@ -3,9 +3,6 @@
 
 <v-stepper v-model="e1">
     <v-stepper-header>
-       <v-stepper-step :complete="e1 > 0" step="0">Poll Details</v-stepper-step>
-
-      <v-divider></v-divider>
 
       <v-stepper-step :complete="e1 > 1" step="1">Poll Details</v-stepper-step>
 
