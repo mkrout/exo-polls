@@ -6,8 +6,9 @@
             <v-flex class="md3 xs-3">
               <v-card>
                 <v-app-bar color="primary" dense dark>
-                  <v-app-bar-nav-icon></v-app-bar-nav-icon>
+                                 
 
+   <v-icon>mdi-chart-line</v-icon>
                   <v-toolbar-title
                     ><div id="nom_s">{{ names }}</div></v-toolbar-title
                   >

@@ -3,6 +3,10 @@
 
 <v-stepper v-model="e1">
     <v-stepper-header>
+       <v-stepper-step :complete="e1 > 0" step="0">Poll Details</v-stepper-step>
+
+      <v-divider></v-divider>
+
       <v-stepper-step :complete="e1 > 1" step="1">Poll Details</v-stepper-step>
 
       <v-divider></v-divider>
@@ -11,7 +15,7 @@
 
       <v-divider></v-divider>
 
-      <v-stepper-step step="3">Review</v-stepper-step>
+      <v-stepper-step :complete="e1 > 3" step="3">Review</v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
@@ -23,89 +27,80 @@
                     id="nom_s"
                     v-model="editedItem.name"
                     :counter="30"
-                    label="Nom sondage"
+                    label="Poll Name"
                     :append-icon="show1 ? 'mdi-pencil' : 'mdi-lead-pencil'"
                     required
                   ></v-text-field>
+                     <v-container> 
+                       <v-row>
+                         <v-col cols="10" lg="5">
+        <v-menu
+          ref="menu1"
+          v-model="menu1"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="dateFormatted"
+              label="Publication date"
+              hint="MM/DD/YYYY format"
+              persistent-hint
+              prepend-icon="event"
+              v-bind="attrs"
+              @blur="date = parseDate(dateFormatted)"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+        </v-menu>
+       </v-col>
+         <v-col cols="10" lg="5">
+        <v-menu
+          v-model="menu2"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="computedDateFormatted"
+              label="Expiration date"
+              hint="MM/DD/YYYY format"
+              persistent-hint
+              prepend-icon="event"
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
+        </v-menu>
+      </v-col>
 
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" lg="6">
-                        <v-menu
-                          ref="menu1"
-                          v-model="menu1"
-                          :close-on-content-click="false"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="publicationDateFormatted"
-                              label="Date de début"
-                              hint="MM/DD/YYYY format"
-                              persistent-hint
-                              :append-icon="
-                                show1 ? 'mdi-calendar' : 'mdi-calendar-check'
-                              "
-                              @blur="editedItem.publicationDate = parseDate(publicationDateFormatted)"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="publicationDate"
-                            no-title
-                            @input="menu1 = false"
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
+                       </v-row>
+                        </v-container>
+                    
 
-                      <v-col cols="12" lg="6">
-                        <v-menu
-                          v-model="menu2"
-                          :close-on-content-click="false"
-                          transition="scale-transition"
-                          offset-y
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="expirationDateFormatted"
-                              label="Date d'expiration"
-                              hint="MM/DD/YYYY format"
-                              persistent-hint
-                              :append-icon="
-                                show1 ? 'mdi-calendar' : 'mdi-calendar-check'
-                              "
-                              readonly
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="expirationDate"
-                            no-title
-                            @input="menu2 = false"
-                          ></v-date-picker>
-                        </v-menu>
 
-                      </v-col>
-                    </v-row>
-                  </v-container>
+                
 
                   <v-container fluid>
                     <v-radio-group v-model="radios">
                       <template v-slot:label>
                         <div>
-                          <strong>Choisir une format de sondage</strong>
+                          <strong>choose a format to answer the poll</strong>
                         </div>
                       </template>
                       <v-radio value="Google">
                         <template v-slot:label>
                           <div>
                             Type 1:
-                            <strong class="primary--text">Classique</strong>
+                            <strong class="primary--text">Classic</strong>
                           </div>
                         </template>
                       </v-radio>
@@ -114,7 +109,7 @@
                           <div>
                             Type 2:
                             <strong class="primary--text"
-                              >Question par question</strong>
+                              >Question by question</strong>
                           </div>
                         </template>
                       </v-radio>
@@ -131,7 +126,7 @@
           Continue
         </v-btn>
 
-        <v-btn text>Cancel</v-btn>
+        <v-btn text @click="e1 = 1">Cancel</v-btn>
       </v-stepper-content>
 
       <v-stepper-content step="2">
@@ -148,7 +143,7 @@
           Continue
         </v-btn>
 
-        <v-btn text>Cancel</v-btn>
+        <v-btn text @click="e1 = 1">Cancel</v-btn>
       </v-stepper-content>
 
       <v-stepper-content step="3">
@@ -163,7 +158,7 @@
           Save
         </v-btn>
 
-        <v-btn text>Cancel</v-btn>
+        <v-btn text @click="e1 = 2" >Cancel </v-btn>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -179,17 +174,15 @@ export default {
     Analyse
   },
   data: (vm) => ({
-      e1: 1,
+    e1: 1,
     loaded: false,
-        questions: [],
+    questions: [],
     chartdata: null,
     tab: null,
-    publicationDate: null,
-    expirationDate: null,
-    publicationDateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    expirationDateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false,
-    menu2: false,
+    date: new Date().toISOString().substr(0, 10),
+      dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+      menu1: false,
+      menu2: false,
     names: "",
     checkbox: false,
     radios: "Duckduckgo",
@@ -200,36 +193,52 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: "",
+      
+
 
       active: true,
     }
   }),
 
   computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date);
-    },
+  
+    computedDateFormatted () {
+        return this.formatDate(this.date)
+      },
+
     formTitle() {
       return this.editedIndex === -1
         ? "Creér un nouveau sondage "
         : "Edit Item";
     },
-  },
+},
 
   watch: {
-    editedItem() {
-      this.publicationDateFormatted = this.formatDate(this.editedItem.publicationDate);
-      this.expirationDateFormatted = this.formatDate(this.editedItem.expirationDate);
-    },
+ 
+       date (val) {
+        this.dateFormatted = this.formatDate(this.date)
+      },
     dialog(val) {
      // val || this.close();
     },
+  
   },
 
 
 
   methods: {
- 
+ formatDate (date) {
+        if (!date){return null}
+
+        const [year, month, day] = date.split('-')
+        return `${month}/${day}/${year}`
+      },
+      parseDate (date) {
+        if (!date) {return null}
+
+        const [month, day, year] = date.split('/')
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      },
         save() {
 
             fetch(`/portal/rest/pollsmanagement/polls`, {
@@ -254,18 +263,7 @@ export default {
                     });
                 });
         },
-    formatDate(date) {
-      if (!date) {return null};
-
-      const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
-    },
-    parseDate(date) {
-      if (!date) {return null};
-
-      const [month, day, year] = date.split("/");
-      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-    },
+    
   },
 };
 </script>

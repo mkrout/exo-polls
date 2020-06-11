@@ -13,10 +13,10 @@
 
                   <template v-slot:top>
                     <v-toolbar flat color="white">
-                      <v-toolbar-title>Archive des sondages</v-toolbar-title>
+                      <v-toolbar-title>Poll Archive</v-toolbar-title>
                       <v-divider class="mx-4" inset vertical></v-divider>
                       <v-spacer></v-spacer>
-                      <v-btn color="primary" dark class="mb-2"  @click="showAddForm()">Créer nouveau sondage</v-btn>
+                      <v-btn color="primary" dark class="mb-2"  @click="showAddForm()">Create new Poll</v-btn>
                     </v-toolbar>
                   </template>
 
@@ -25,7 +25,7 @@
                     <v-icon small color="primary" @click="deleteItem(item)">mdi-delete</v-icon>
                   </template>
                   <template v-slot:no-data>
-                    <v-btn color="primary" dark class="mb-2"  @click="showAddForm()">Créer nouveau sondage</v-btn>
+                    <v-btn color="primary" dark class="mb-2"  @click="showAddForm()">Create New Poll</v-btn>
                   </template>
                 </v-data-table>
             </v-card>
@@ -38,24 +38,27 @@ export default {
       components: {
         AddPoll,
     },
+ 
   data: (vm) => ({
     showAdd:false,
     loaded: false,
     chartdata: null,
     names: '',
+     show1: false,
+     showLister: false,
     dialog: false,
     headers: [
       {
-        text: 'Nom de sondage',
+        text: 'Poll Name',
         align: 'start',
         sortable: false,
         value: 'name',
       },
-      {text: 'Date de création', value: 'createdDate'},
-      {text: 'Date de publication', value: 'publicationDate'},
-      {text: 'date d expiration', value: 'expirationDate'},
-      {text: 'Nombre des réponses', value: 'nbrrep'},
-      {text: 'Etat', value: 'active'},
+      {text: 'Creation Date', value: 'createdDate'},
+      {text: 'Publication Date', value: 'publicationDate'},
+      {text: 'Expiration Date', value: 'expirationDate'},
+      {text: 'Response Number', value: 'nbrrep'},
+      {text: 'State', value: 'active'},
       {text: 'Actions', value: 'actions', sortable: false},
     ],
     polls: [],
