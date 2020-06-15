@@ -73,7 +73,7 @@ public class PollsManagementRest implements ResourceContainer {
   @POST
   @Path("polls")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response add(@Context UriInfo uriInfo, QuestionDTO questionDTO throws Exception {
+  public Response add(@Context UriInfo uriInfo, QuestionDTO questionDTO) throws Exception{
     try {
       pollsManagementService.addQuestion(questionDTO);
       return Response.ok("Question added").build();

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.polls.dao.PollDAO;
+import org.exoplatform.polls.dao.QuestionDAO;
+import org.exoplatform.polls.dao.ResponseDAO;
 import org.exoplatform.polls.dto.PollDTO;
 import org.exoplatform.polls.dto.QuestionDTO;
 import org.exoplatform.polls.dto.ResponseDTO;
@@ -21,8 +23,8 @@ public class PollsManagementService {
     private final Log LOG = ExoLogger.getLogger(PollsManagementService.class);
 
     private PollDAO pollDAO;
-    private QuestionDTO questionDTO;
-    private ResponseDTO responseDTO;
+    private QuestionDAO questionDAO;
+    private ResponseDAO responseDAO;
     private ResponseEntity responseEntity;
     private SimpleDateFormat formatter  = new SimpleDateFormat("mm/dd/yyyy");
 
@@ -59,16 +61,18 @@ public class PollsManagementService {
 
 
     }
-    public void addQuestion(QuestionDTO questionDTO) {
+    //question_add
+    public QuestionDTO addQuestion(QuestionDTO questionDTO) {
 
-        return toQuestionDTO(questionDAO.create(toQuestionEntity(questionDTO)));
+        return toQuestioDTO(questionDAO.create(toQuestionEntity(questionDTO)));
     }
-    public void addResponse (ResponseDTO responseDTO) {
+    //response_add
+    public ResponseDTO addResponse (ResponseDTO responseDTO) {
         return toResponseDTO(responseDAO.create(toResponseEntity(responseDTO)));
     }
 
 
-    //poll
+    //poll_delete_and_update
     public void deletePoll(PollEntity pollEntityEntity) {
         pollDAO.delete(pollEntityEntity);
     }
@@ -83,20 +87,21 @@ public class PollsManagementService {
         return pollDAO.find(id);
 
     }
-    //question
+    //question_delete_and_update
     public void deleteQuestion(QuestionEntity questionEntityEntity) {
         questionDAO.delete(questionEntityEntity);
     }
 
     public QuestionDTO updateQuestion(QuestionDTO questionDTO) {
         QuestionEntity newRessource = questionDAO.update(toQuestionEntity(questionDTO));
-        return toQuestionDTO(newRessource);
+        return toQuestioDTO(newRessource);
 
     }
     public QuestionEntity getQuestionById(Long id) {
         return questionDAO.find(id);
 
     }
+
     //response
     public void deleteResponse(ResponseEntity responseEntityEntity) {
         responseDAO.delete(responseEntityEntity);
@@ -182,7 +187,7 @@ public class PollsManagementService {
         return responseDTO;
     }
 
-    public ResponseEntity toQResponseEntity(ResponseDTO responseDTO) {
+    public ResponseEntity toResponseEntity(ResponseDTO responseDTO) {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setId(responseDTO.getId());
         responseEntity.setResponse(responseDTO.getResponse());
