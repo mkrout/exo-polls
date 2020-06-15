@@ -2,6 +2,7 @@ package org.exoplatform.polls.dto;
 
 
 import lombok.Data;
+import org.exoplatform.polls.entity.QuestionEntity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +13,7 @@ public class QuestionDTO implements Serializable {
     private Long id;
     private String question;
     private PollDTO poll;
+
 
 }
 

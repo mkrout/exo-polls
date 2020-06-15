@@ -14,6 +14,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.exoplatform.polls.dto.PollDTO;
+import org.exoplatform.polls.dto.QuestionDTO;
+import org.exoplatform.polls.dto.ResponseDTO;
 import org.exoplatform.polls.entity.PollEntity;
 import org.exoplatform.polls.services.PollsManagementService;
 import org.exoplatform.services.log.ExoLogger;
@@ -65,6 +67,30 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.ok("Poll added").build();
     } catch (Exception e) {
       LOG.error("An error occured when trying to add new poll {}", pollDTO.getName(), e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+  @POST
+  @Path("polls")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response add(@Context UriInfo uriInfo, QuestionDTO questionDTO throws Exception {
+    try {
+      pollsManagementService.addQuestion(questionDTO);
+      return Response.ok("Question added").build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to add new question {}", questionDTO.getQuestion(), e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+  @POST
+  @Path("polls")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response add(@Context UriInfo uriInfo,   ResponseDTO responseDTO) throws Exception {
+    try {
+      pollsManagementService.addResponse(responseDTO);
+      return Response.ok("Response added").build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to add new response {}", responseDTO.getResponse(), e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }

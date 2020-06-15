@@ -18,7 +18,7 @@
     <v-stepper-items>
       <v-stepper-content step="1">
         <v-card flat>
-              <v-card class="mx-auto" max-width="700">
+              <v-card class="mx-auto" max-width="1000">
                 <v-form ref="form">
                   <v-text-field
                     id="nom_s"
@@ -30,7 +30,7 @@
                   ></v-text-field>
                      <v-container> 
                        <v-row>
-                         <v-col cols="10" lg="5">
+                         <v-col cols="5" lg="4">
         <v-menu
           ref="menu1"
           v-model="menu1"
@@ -42,8 +42,8 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              v-model="dateFormatted"
-              label="Publication date"
+              v-model="dateFormatted1"
+              label="Creation date"
               hint="MM/DD/YYYY format"
               persistent-hint
               prepend-icon="event"
@@ -52,10 +52,10 @@
               v-on="on"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="date1" no-title @input="menu1 = false"></v-date-picker>
         </v-menu>
        </v-col>
-         <v-col cols="10" lg="5">
+         <v-col cols="5" lg="4">
         <v-menu
           v-model="menu2"
           :close-on-content-click="false"
@@ -66,8 +66,8 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              v-model="computedDateFormatted"
-              label="Expiration date"
+              v-model="dateFormatted2"
+              label="Publication date"
               hint="MM/DD/YYYY format"
               persistent-hint
               prepend-icon="event"
@@ -75,9 +75,33 @@
               v-on="on"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
+          <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
         </v-menu>
       </v-col>
+      <v-col cols="5" lg="4">
+      <v-menu
+          ref="menu3"
+          v-model="menu3"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          max-width="290px"
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="dateFormatted3"
+              label=" date"
+              hint="MM/DD/YYYY format"
+              persistent-hint
+              prepend-icon="event"
+              v-bind="attrs"
+              @blur="date = parseDate(dateFormatted)"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date3" no-title @input="menu3 = false"></v-date-picker>
+        </v-menu></v-col>
 
                        </v-row>
                         </v-container>
@@ -170,17 +194,23 @@ export default {
     Lister,
     Analyse
   },
+    
   data: (vm) => ({
     e1: 1,
     loaded: false,
     questions: [],
     chartdata: null,
     tab: null,
-    date: new Date().toISOString().substr(0, 10),
-      dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    date1: new Date().toISOString().substr(0, 10),
+        date2: new Date().toISOString().substr(0, 10),
+            date3: new Date().toISOString().substr(0, 10),
+      dateFormatted1: vm.formatDate(new Date().toISOString().substr(0, 10)),
+            dateFormatted2: vm.formatDate(new Date().toISOString().substr(0, 10)),
+                  dateFormatted3: vm.formatDate(new Date().toISOString().substr(0, 10)),
       menu1: false,
       menu2: false,
-    names: "",
+      menu3: false,
+names: "",
     checkbox: false,
     radios: "Duckduckgo",
     switchMe: false,
@@ -190,19 +220,22 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: "",
-      
-
-
+        names: "app",
       active: true,
     }
   }),
 
   computed: {
   
-    computedDateFormatted () {
-        return this.formatDate(this.date)
+    computedDateFormatted1 () {
+        return this.formatDate(this.date1)
       },
-
+          computedDateFormatted2 () {
+        return this.formatDate(this.date2)
+      },
+    computedDateFormatted3 () {
+        return this.formatDate(this.date3)
+      },
     formTitle() {
       return this.editedIndex === -1
         ? "Creér un nouveau sondage "
@@ -213,7 +246,13 @@ export default {
   watch: {
  
        date (val) {
-        this.dateFormatted = this.formatDate(this.date)
+        this.dateFormatted1 = this.formatDate(this.date1)
+      },
+        date (val) {
+        this.dateFormatted2 = this.formatDate(this.date2)
+      },
+        date (val) {
+        this.dateFormatted3 = this.formatDate(this.date3)
       },
     dialog(val) {
      // val || this.close();
@@ -237,7 +276,9 @@ export default {
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
         save() {
-
+            this.editedItem.createdDateFormatted=this.dateFormatted
+            this.editedItem.publicationDateFormatted=this.dateFormatted
+            this.editedItem.expirationDateFormatted=this.dateFormatted
             fetch(`/portal/rest/pollsmanagement/polls`, {
                     method: 'post',
                     credentials: 'include',

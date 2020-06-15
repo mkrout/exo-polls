@@ -8,7 +8,7 @@
                 <v-app-bar color="primary" dense dark>
                                  
 
-   <v-icon>mdi-chart-line</v-icon>
+                   <v-icon>mdi-chart-line</v-icon>
                   <v-toolbar-title
                     ><div id="nom_s">{{ names }}</div></v-toolbar-title
                   >
@@ -144,6 +144,14 @@
 export default {
 
  props:['props','questions'],
+ 
+ props: {
+  names: {
+      type: String,
+      required: true,
+      default: null,
+    },
+    },
   data: () => ({
     inputs: [{ name: "" }],
     currentResponses: [],

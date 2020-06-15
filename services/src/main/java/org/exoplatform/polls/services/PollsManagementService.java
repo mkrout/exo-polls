@@ -1,10 +1,11 @@
 package org.exoplatform.polls.services;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.mail.iap.Response;
 import org.exoplatform.polls.dao.PollDAO;
 import org.exoplatform.polls.dto.PollDTO;
 import org.exoplatform.polls.dto.QuestionDTO;
@@ -20,7 +21,10 @@ public class PollsManagementService {
     private final Log LOG = ExoLogger.getLogger(PollsManagementService.class);
 
     private PollDAO pollDAO;
+    private QuestionDTO questionDTO;
+    private ResponseDTO responseDTO;
     private ResponseEntity responseEntity;
+    private SimpleDateFormat formatter  = new SimpleDateFormat("mm/dd/yyyy");
 
     public PollsManagementService(PollDAO pollDAO) {
         this.pollDAO = pollDAO;
@@ -34,11 +38,37 @@ public class PollsManagementService {
         return  new ArrayList<>();
 
     }
+   //        public static final String TASK_DATE_FORMAT= "yyyy-MM-dd";
+    //        public static final createdDateFormatted createdDate=new createdDateFormatted(TASK_DATE_FORMAT);
+    //       public static final createdDate.parse("yyyy-MM-dd");
+
+
+
 
     public PollDTO addPolls(PollDTO pollDTO) {
+        try {
+            pollDTO.setCreatedDate(formatter.parse(pollDTO.getCreatedDateFormatted()));
+            pollDTO.setPublicationDate(formatter.parse(pollDTO.getPublicationDateFormatted()));
+            pollDTO.setExpirationDate(formatter.parse(pollDTO.getExpirationDateFormatted()));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return toPollDTO(pollDAO.create(toPollEntity(pollDTO)));
+
+
+    }
+    public void addQuestion(QuestionDTO questionDTO) {
+
+        return toQuestionDTO(questionDAO.create(toQuestionEntity(questionDTO)));
+    }
+    public void addResponse (ResponseDTO responseDTO) {
+        return toResponseDTO(responseDAO.create(toResponseEntity(responseDTO)));
     }
 
+
+    //poll
     public void deletePoll(PollEntity pollEntityEntity) {
         pollDAO.delete(pollEntityEntity);
     }
@@ -53,6 +83,36 @@ public class PollsManagementService {
         return pollDAO.find(id);
 
     }
+    //question
+    public void deleteQuestion(QuestionEntity questionEntityEntity) {
+        questionDAO.delete(questionEntityEntity);
+    }
+
+    public QuestionDTO updateQuestion(QuestionDTO questionDTO) {
+        QuestionEntity newRessource = questionDAO.update(toQuestionEntity(questionDTO));
+        return toQuestionDTO(newRessource);
+
+    }
+    public QuestionEntity getQuestionById(Long id) {
+        return questionDAO.find(id);
+
+    }
+    //response
+    public void deleteResponse(ResponseEntity responseEntityEntity) {
+        responseDAO.delete(responseEntityEntity);
+    }
+
+    public ResponseDTO updateResponse(ResponseDTO responseDTO) {
+        ResponseEntity newRessource = responseDAO.update(toResponseEntity(responseDTO));
+        return toResponseDTO(newRessource);
+
+    }
+    public ResponseEntity getResponseById(Long id) {
+        return responseDAO.find(id);
+
+    }
+
+
 
 
     public List<PollDTO> toPollDTOList(List<PollEntity> pollEntities) {
@@ -71,6 +131,9 @@ public class PollsManagementService {
         pollDTO.setCreatedDate(pollEntity.getCreatedDate());
         pollDTO.setExpirationDate(pollEntity.getExpirationDate());
         pollDTO.setPublicationDate(pollEntity.getPublicationDate());
+        if(pollEntity.getCreatedDate()!=null)pollDTO.setCreatedDateFormatted(formatter.format(pollEntity.getCreatedDate()));
+        if(pollEntity.getExpirationDate()!=null)pollDTO.setExpirationDateFormatted(formatter.format(pollEntity.getExpirationDate()));
+        if(pollEntity.getPublicationDate()!=null)pollDTO.setPublicationDateFormatted(formatter.format(pollEntity.getPublicationDate()));
         pollDTO.setUserName(pollEntity.getUserName());
         pollDTO.setDescription(pollEntity.getDescription());
         return pollDTO;
@@ -110,6 +173,7 @@ public class PollsManagementService {
         poll.setId(id);
         return poll ;
     }
+
     public ResponseDTO toResponseDTO(ResponseEntity responseEntity) {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setId( responseEntity.getId());
@@ -131,5 +195,7 @@ public class PollsManagementService {
         question.setId(id);
         return question ;
     }
+
+
 
 }
