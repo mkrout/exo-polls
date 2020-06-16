@@ -7,10 +7,12 @@
               <v-card>
                 <v-app-bar color="primary" dense dark>
                                  
-
+<div>
                    <v-icon>mdi-chart-line</v-icon>
+               
+</div>
                   <v-toolbar-title
-                    ><div id="nom_s">{{ names }}</div></v-toolbar-title
+                    ><div id="nom_s">{{ pollName }}</div></v-toolbar-title
                   >
 
                   <v-spacer></v-spacer>
@@ -62,6 +64,7 @@
                       <v-row>
                         <v-col cols="17" sm="8" md="6">
                           <v-text-field
+                          v-model="inputs[0].name"
                             label="Saisir un choix de réponse"
                           ></v-text-field>
                         </v-col>
@@ -82,7 +85,7 @@
                     </v-container>
 
                     <v-container>
-                      <v-row v-for="(input, k) in inputs" :key="k">
+                      <v-row v-for="(input, k) in inputs.slice(1,inputs.length)" :key="k">
                         <v-col cols="17" sm="8" md="6">
                           <v-text-field
                             v-model="input.name"
@@ -143,19 +146,23 @@
 <script>
 export default {
 
- props:['props','questions'],
+ props:['pollName','questions'],
  
- props: {
-  names: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    },
+
   data: () => ({
-    inputs: [{ name: "" }],
+    inputs: [{ name: "" },{ name: "" }],
     currentResponses: [],
     currentQuestion: {
+      question: "",
+      responses: [
+        {
+          response: "",
+          responseType: ""
+        }
+      ]
+    },
+
+        emptyQuestion: {
       question: "",
       responses: [
         {
@@ -183,7 +190,6 @@ export default {
       { text: "25%" },
       { text: "0%" }
     ],
-    props: ["names"]
   }),
 
   methods: {
@@ -213,7 +219,7 @@ export default {
       }
      // this.currentQuestion.responses = this.currentResponses;
       this.questions.push(this.currentQuestion);
-      this.currentQuestion = {};
+      this.currentQuestion = this.emptyQuestion;
       this.currentResponses = [];
       this.inputs = [{ name: "" }];
     }

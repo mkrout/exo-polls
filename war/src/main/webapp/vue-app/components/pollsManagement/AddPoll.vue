@@ -1,7 +1,9 @@
 <template>
 <div>
 
+
 <v-stepper v-model="e1">
+  
     <v-stepper-header>
 
       <v-stepper-step :complete="e1 > 1" step="1">Poll Details</v-stepper-step>
@@ -22,6 +24,8 @@
                 <v-form ref="form">
                   <v-text-field
                     id="nom_s"
+    
+               
                     v-model="editedItem.name"
                     :counter="30"
                     label="Poll Name"
@@ -150,14 +154,15 @@
           Continue
         </v-btn>
 
-        <v-btn text @click="e1 = 1">Cancel</v-btn>
+        <v-btn text  @click="e1 = 1">Cancel</v-btn>
       </v-stepper-content>
 
       <v-stepper-content step="2">
         <Lister
-      :names="names"
+      :pollName="editedItem.name"
       :questions="questions"
       @showListerAction="showHelloWord()"
+ 
     ></Lister>
 
         <v-btn
@@ -304,6 +309,7 @@ names: "",
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
         save() {
+
             this.editedItem.createdDateFormatted=this.dateFormatted1
             this.editedItem.publicationDateFormatted=this.dateFormatted2
             this.editedItem.expirationDateFormatted=this.dateFormatted3
@@ -330,7 +336,11 @@ names: "",
                     });
                 });
         },
-    
+      back() {
+      this.show = false;
+      this.$emit("showListerAction", this.show);
+    },
   },
+
 };
 </script>

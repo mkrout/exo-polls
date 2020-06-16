@@ -11,12 +11,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import javax.ws.rs.core.UriInfo;
 
 import org.exoplatform.polls.dto.PollDTO;
 import org.exoplatform.polls.dto.QuestionDTO;
 import org.exoplatform.polls.dto.ResponseDTO;
 import org.exoplatform.polls.entity.PollEntity;
+import org.exoplatform.polls.entity.QuestionEntity;
+import org.exoplatform.polls.entity.ResponseEntity;
 import org.exoplatform.polls.services.PollsManagementService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -116,6 +119,46 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.ok("Poll deleted").build();
     } catch (Exception e) {
       LOG.error("An error occured when trying to delete Poll {}", id, e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+  }
+  @DELETE
+  @Path("questions/{id}")
+  public Response delete(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      QuestionEntity questionEntity = pollsManagementService.getQuestionById(id);
+      if (questionEntity == null) {
+        return Response.status(Response.Status.NOT_FOUND).entity("Question not found").build();
+      }
+      pollsManagementService.deleteQuestion(questionEntity);
+      LOG.info("Question {} deleted by {}", id, sourceIdentity.getRemoteId());
+      return Response.ok("question deleted").build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to delete Poll {}", id, e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+  }
+  @DELETE
+  @Path("responses/{id}")
+  public Response delete(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      ResponseEntity responseEntity = pollsManagementService.getResponseById(id);
+      if (responseEntity == null) {
+        return Response.status(Response.Status.NOT_FOUND).entity("response not found").build();
+      }
+      pollsManagementService.deleteResponse(responseEntity);
+      LOG.info("Response {} deleted by {}", id, sourceIdentity.getRemoteId());
+      return Response.ok("response deleted").build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to delete Response {}", id, e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
   }
