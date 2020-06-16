@@ -26,7 +26,7 @@ public class PollsManagementService {
     private QuestionDAO questionDAO;
     private ResponseDAO responseDAO;
     private ResponseEntity responseEntity;
-    private SimpleDateFormat formatter  = new SimpleDateFormat("mm/dd/yyyy");
+    private SimpleDateFormat formatter  = new SimpleDateFormat("yyyy-mm-dd");
 
     public PollsManagementService(PollDAO pollDAO) {
         this.pollDAO = pollDAO;

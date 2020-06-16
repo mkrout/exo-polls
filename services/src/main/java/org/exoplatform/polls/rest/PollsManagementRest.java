@@ -57,7 +57,7 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
-
+  //add_poll
   @POST
   @Path("polls")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -70,8 +70,9 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+  //add_question
   @POST
-  @Path("polls")
+  @Path("questions")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response add(@Context UriInfo uriInfo, QuestionDTO questionDTO) throws Exception{
     try {
@@ -82,8 +83,11 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+
+
+  //add_response
   @POST
-  @Path("polls")
+  @Path("responses")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response add(@Context UriInfo uriInfo,   ResponseDTO responseDTO) throws Exception {
     try {

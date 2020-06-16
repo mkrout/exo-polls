@@ -48,15 +48,16 @@
               persistent-hint
               prepend-icon="event"
               v-bind="attrs"
-              @blur="date = parseDate(dateFormatted)"
+              @blur="date1 = parseDate(dateFormatted1)"
               v-on="on"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date1" no-title @input="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dateFormatted1" no-title @input="menu1 = false"></v-date-picker>
         </v-menu>
        </v-col>
          <v-col cols="5" lg="4">
         <v-menu
+          ref="menu2"
           v-model="menu2"
           :close-on-content-click="false"
           transition="scale-transition"
@@ -72,10 +73,12 @@
               persistent-hint
               prepend-icon="event"
               v-bind="attrs"
+              
+              @blur="date2 = parseDate(dateFormatted2)"
               v-on="on"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date2" no-title @input="menu2 = false"></v-date-picker>
+          <v-date-picker v-model="dateFormatted2" no-title @input="menu2 = false"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col cols="5" lg="4">
@@ -91,16 +94,16 @@
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="dateFormatted3"
-              label=" date"
+              label="Expiration date"
               hint="MM/DD/YYYY format"
               persistent-hint
               prepend-icon="event"
               v-bind="attrs"
-              @blur="date = parseDate(dateFormatted)"
+              @blur="date3 = parseDate(dateFormatted3)"
               v-on="on"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date3" no-title @input="menu3 = false"></v-date-picker>
+          <v-date-picker v-model="dateFormatted3" no-title @input="menu3 = false"></v-date-picker>
         </v-menu></v-col>
 
                        </v-row>
@@ -201,15 +204,14 @@ export default {
     questions: [],
     chartdata: null,
     tab: null,
-    date1: new Date().toISOString().substr(0, 10),
-        date2: new Date().toISOString().substr(0, 10),
-            date3: new Date().toISOString().substr(0, 10),
-      dateFormatted1: vm.formatDate(new Date().toISOString().substr(0, 10)),
-            dateFormatted2: vm.formatDate(new Date().toISOString().substr(0, 10)),
-                  dateFormatted3: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    date: new Date().toISOString().substr(0, 10),
+        dateFormatted1:"",
+  dateFormatted2:"",
+    dateFormatted3:"",
       menu1: false,
-      menu2: false,
-      menu3: false,
+          menu2: false,
+              menu3: false,
+    
 names: "",
     checkbox: false,
     radios: "Duckduckgo",
@@ -228,14 +230,15 @@ names: "",
   computed: {
   
     computedDateFormatted1 () {
-        return this.formatDate(this.date1)
+        return this.formatDate(this.dateFormatted1)
       },
-          computedDateFormatted2 () {
-        return this.formatDate(this.date2)
+      computedDateFormatted2 () {
+        return this.formatDate1(this.dateFormatted2)
       },
-    computedDateFormatted3 () {
-        return this.formatDate(this.date3)
+      computedDateFormatted3 () {
+        return this.formatDate2(this.dateFormatted3)
       },
+      
     formTitle() {
       return this.editedIndex === -1
         ? "Creér un nouveau sondage "
@@ -246,14 +249,15 @@ names: "",
   watch: {
  
        date (val) {
-        this.dateFormatted1 = this.formatDate(this.date1)
+        this.dateFormatted1 = this.formatDate(this.dateFormatted1)
       },
         date (val) {
-        this.dateFormatted2 = this.formatDate(this.date2)
+        this.dateFormatted2 = this.formatDate1(this.dateFormatted2)
       },
         date (val) {
-        this.dateFormatted3 = this.formatDate(this.date3)
+        this.dateFormatted3 = this.formatDate2(this.dateFormatted3)
       },
+     
     dialog(val) {
      // val || this.close();
     },
@@ -263,22 +267,47 @@ names: "",
 
 
   methods: {
- formatDate (date) {
-        if (!date){return null}
+ formatDate (dateFormatted1) {
+        if (!dateFormatted1){return null}
 
         const [year, month, day] = date.split('-')
         return `${month}/${day}/${year}`
       },
-      parseDate (date) {
-        if (!date) {return null}
+      parseDate (dateFormatted1) {
+        if (!dateFormatted1) {return null}
 
-        const [month, day, year] = date.split('/')
+        const [month, day, year] = dateFormatted1.split('/')
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      },
+      formatDate1 (dateFormatted2) {
+        if (!dateFormatted2){return null}
+
+        const [year, month, day] = date.split('-')
+        return `${month}/${day}/${year}`
+      },
+      parseDate1 (dateFormatted2) {
+        if (!dateFormatted2) {return null}
+
+        const [month, day, year] = dateFormatted2.split('/')
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      },
+      formatDate2 (dateFormatted3) {
+        if (!dateFormatted3){return null}
+
+        const [year, month, day] = date.split('-')
+        return `${month}/${day}/${year}`
+      },
+      parseDate2 (dateFormatted3) {
+        if (!dateFormatted3) {return null}
+
+        const [month, day, year] = dateFormatted3.split('/')
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
         save() {
-            this.editedItem.createdDateFormatted=this.dateFormatted
-            this.editedItem.publicationDateFormatted=this.dateFormatted
-            this.editedItem.expirationDateFormatted=this.dateFormatted
+            this.editedItem.createdDateFormatted=this.dateFormatted1
+            this.editedItem.publicationDateFormatted=this.dateFormatted2
+            this.editedItem.expirationDateFormatted=this.dateFormatted3
+          
             fetch(`/portal/rest/pollsmanagement/polls`, {
                     method: 'post',
                     credentials: 'include',

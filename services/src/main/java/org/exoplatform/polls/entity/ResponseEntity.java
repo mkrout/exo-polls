@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ResponseEntity implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "SEQ_ADDONS_POLL_RESPONSE_ID" , sequenceName = "SEQ_ADDONS_POLL_RESPONSE_ID")
+    @SequenceGenerator(name = "SEQ_ADDONS_POLL_RESPONSE_ID", sequenceName = "SEQ_ADDONS_POLL_RESPONSE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_ADDONS_POLL_RESPONSE_ID")
     @Column(name = "ID")
     protected Long id;
@@ -27,7 +27,8 @@ public class ResponseEntity implements Serializable {
     public ResponseEntity() {
     }
 
-    public ResponseEntity(String question) {
+    public ResponseEntity(String response) {
         this.response = response;
     }
 }
+
