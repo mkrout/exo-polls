@@ -1,5 +1,5 @@
 <template>
-<div>
+<div >
 
 
 <v-stepper v-model="e1">
@@ -15,8 +15,8 @@
       <v-divider></v-divider>
 
       <v-stepper-step :complete="e1 > 3" step="3">Review</v-stepper-step>
-    </v-stepper-header>
 
+    </v-stepper-header>
     <v-stepper-items>
       <v-stepper-content step="1">
         <v-card flat>
@@ -31,6 +31,8 @@
                     label="Poll Name"
                     :append-icon="show1 ? 'mdi-pencil' : 'mdi-lead-pencil'"
                     required
+                   :rules="inputRules"
+
                   ></v-text-field>
                      <v-container> 
                        <v-row>
@@ -54,6 +56,7 @@
               v-bind="attrs"
               @blur="date1 = parseDate(dateFormatted1)"
               v-on="on"
+              :rules="inputRules"
             ></v-text-field>
           </template>
           <v-date-picker v-model="dateFormatted1" no-title @input="menu1 = false"></v-date-picker>
@@ -80,6 +83,7 @@
               
               @blur="date2 = parseDate(dateFormatted2)"
               v-on="on"
+              :rules="inputRules"
             ></v-text-field>
           </template>
           <v-date-picker v-model="dateFormatted2" no-title @input="menu2 = false"></v-date-picker>
@@ -105,6 +109,7 @@
               v-bind="attrs"
               @blur="date3 = parseDate(dateFormatted3)"
               v-on="on"
+              :rules="inputRules"
             ></v-text-field>
           </template>
           <v-date-picker v-model="dateFormatted3" no-title @input="menu3 = false"></v-date-picker>
@@ -146,15 +151,16 @@
                 </v-form>
               </v-card>
             </v-card>
-
-        <v-btn
+<div class="buttons">
+        <v-btn 
           color="primary"
-          @click="e1 = 2"
+          @click="step1()"
         >
           Continue
         </v-btn>
 
         <v-btn text  @click="e1 = 1">Cancel</v-btn>
+</div>
       </v-stepper-content>
 
       <v-stepper-content step="2">
@@ -164,7 +170,7 @@
       @showListerAction="showHelloWord()"
  
     ></Lister>
-
+<div class="buttons">
         <v-btn
           color="primary"
           @click="e1 = 3"
@@ -172,30 +178,51 @@
           Continue
         </v-btn>
 
-        <v-btn text @click="e1 = 1">Cancel</v-btn>
+        <v-btn text @click="e1 = 1"
+         border="0.5px solid rgba(128, 128, 128, 0.4)"
+         >Cancel</v-btn></div>
       </v-stepper-content>
 
       <v-stepper-content step="3">
         <v-card>
         <Analyse :questions="questions"></Analyse>
         </v-card>
-
-        <v-btn
+<div class="buttons">
+        <v-btn 
           color="primary"
           @click="save()"
         >
           Save
         </v-btn>
+        
 
-        <v-btn text @click="e1 = 2" >Cancel </v-btn>
+
+        <v-btn text @click="e1 = 2" >Cancel </v-btn></div>
+        <!-- <v-alert type="success"> Poll added<strong>successfully</strong></v-alert> -->
       </v-stepper-content>
+      
     </v-stepper-items>
   </v-stepper>
-  </div>
+   <v-alert 
+        v-show="!nameAlert" 
+        width="240" 
+        dismissible
+        class="error"
+      >{{messageAlert}}</v-alert>
+      <v-alert 
+        v-show="!dateAlert" 
+        width="240" 
+        dismissible
+        class="error"
+
+      >{{messageAlert}}</v-alert>
+</div>
 </template>
 <script>
 import Lister from "./Lister.vue";
 import Analyse from "./Analyse.vue";
+
+
 export default {
   components: {
       
@@ -205,6 +232,9 @@ export default {
     
   data: (vm) => ({
     e1: 1,
+    messageAlert:'',
+    nameAlert:true,
+    dateAlert:true,
     loaded: false,
     questions: [],
     chartdata: null,
@@ -229,7 +259,9 @@ names: "",
       name: "",
         names: "app",
       active: true,
-    }
+    },
+        inputRules: [(v) => v.length >= 1 || "This field is required"],
+
   }),
 
   computed: {
@@ -308,19 +340,37 @@ names: "",
         const [month, day, year] = dateFormatted3.split('/')
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
+      step1(){
+
+        if(this.editedItem.name===""){
+          this.nameAlert=false;
+          this.messageAlert="Invalid name";}
+
+        else if (this.dateFormatted1==="" || this.dateFormatted2==="" || this.dateFormatted3==="" || this.dateFormatted1>this.dateFormatted2 || this.dateFormatted3<this.dateFormatted2  ){
+          this.dateAlert=false;
+          this.messageAlert="Invalid date";
+        }
+        else{
+          this.e1=2;
+        }
+
+      },
         save() {
 
             this.editedItem.createdDateFormatted=this.dateFormatted1
             this.editedItem.publicationDateFormatted=this.dateFormatted2
             this.editedItem.expirationDateFormatted=this.dateFormatted3
-          
+            const details= {}
+            details.poll=this.editedItem
+            details.questions=this.questions
+            
             fetch(`/portal/rest/pollsmanagement/polls`, {
                     method: 'post',
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(this.editedItem),
+                    body: JSON.stringify(details),
                 })
                 .then((result) => {
                     if (!result.ok) {
@@ -334,13 +384,39 @@ names: "",
                     result.text().then((body) => {
                         this.displayErrorMessage(body);
                     });
+                
                 });
         },
       back() {
-      this.show = false;
-      this.$emit("showListerAction", this.show);
+      this.$emit("showAddForm");
     },
   },
 
 };
 </script>
+<style scoped>
+form.v-form {
+    padding: 10px;
+}
+.v-card.v-card--flat.v-sheet.theme--light {
+    margin-bottom: 20px;
+}
+.buttons{
+  text-align: center;
+  margin: 20px;
+}
+.v-alert.error.v-sheet.theme--light, .v-alert.success.v-sheet.theme--light {
+    position: absolute;
+    margin-top: -35%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    
+}
+.v-alert.error {
+background: rgba(208, 123, 123, 0.48) !important;
+}
+.v-alert.success{
+background: rgba(108, 203, 174, 0.64) !important;
+}
+</style>

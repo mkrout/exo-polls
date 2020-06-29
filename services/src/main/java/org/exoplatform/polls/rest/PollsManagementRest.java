@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.exoplatform.polls.dto.PollDTO;
+import org.exoplatform.polls.dto.PollDetails;
 import org.exoplatform.polls.dto.QuestionDTO;
 import org.exoplatform.polls.dto.ResponseDTO;
 import org.exoplatform.polls.entity.PollEntity;
@@ -41,10 +42,14 @@ public class PollsManagementRest implements ResourceContainer {
 
   private PollsManagementService pollsManagementService;
 
+
   public PollsManagementRest(PollsManagementService pollsManagementService) {
    this.pollsManagementService=pollsManagementService;
   }
 
+
+
+//get polls
   @GET
   @Path("polls")
   @Produces(MediaType.APPLICATION_JSON)
@@ -60,24 +65,75 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+
+/*
+
+
+  //Get questions
+  @GET
+  @Path("questions")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getQuestions(@Context UriInfo uriInfo) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      return Response.ok(pollsManagementService.getQuestions()).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get polls list", e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+
+
+  //Get response
+  @GET
+  @Path("responses")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getResponses(@Context UriInfo uriInfo) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      return Response.ok(pollsManagementService.getResponses()).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get polls list", e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+
+*/
+
+
   //add_poll
   @POST
   @Path("polls")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response add(@Context UriInfo uriInfo, PollDTO pollDTO) throws Exception {
+  public Response add(@Context UriInfo uriInfo, PollDetails poll) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
     try {
-      pollsManagementService.addPolls(pollDTO);
+      pollsManagementService.addPolls(poll,sourceIdentity.getRemoteId());
       return Response.ok("Poll added").build();
     } catch (Exception e) {
-      LOG.error("An error occured when trying to add new poll {}", pollDTO.getName(), e);
+      LOG.error("An error occured when trying to add new poll {}", poll.getPoll().getName(), e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+
+
+
   //add_question
   @POST
   @Path("questions")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response add(@Context UriInfo uriInfo, QuestionDTO questionDTO) throws Exception{
+  public Response addquestions(@Context UriInfo uriInfo, QuestionDTO questionDTO) throws Exception{
     try {
       pollsManagementService.addQuestion(questionDTO);
       return Response.ok("Question added").build();
@@ -92,7 +148,7 @@ public class PollsManagementRest implements ResourceContainer {
   @POST
   @Path("responses")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response add(@Context UriInfo uriInfo,   ResponseDTO responseDTO) throws Exception {
+  public Response addResponse(@Context UriInfo uriInfo,   ResponseDTO responseDTO) throws Exception {
     try {
       pollsManagementService.addResponse(responseDTO);
       return Response.ok("Response added").build();
@@ -102,9 +158,12 @@ public class PollsManagementRest implements ResourceContainer {
     }
   }
 
+
+
+  // delete poll
   @DELETE
   @Path("polls/{id}")
-  public Response delete(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+  public Response deletePolls(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
     Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
     if (sourceIdentity == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -122,47 +181,53 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
   }
+
+  //delete question
   @DELETE
   @Path("questions/{id}")
-  public Response delete(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+  public Response deletequestions(@Context UriInfo uriInfo, @PathParam("idquestion") Long idquestion) throws Exception {
     Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
     if (sourceIdentity == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      QuestionEntity questionEntity = pollsManagementService.getQuestionById(id);
+      QuestionEntity questionEntity = pollsManagementService.getQuestionById(idquestion);
       if (questionEntity == null) {
         return Response.status(Response.Status.NOT_FOUND).entity("Question not found").build();
       }
       pollsManagementService.deleteQuestion(questionEntity);
-      LOG.info("Question {} deleted by {}", id, sourceIdentity.getRemoteId());
+      LOG.info("Question {} deleted by {}", idquestion, sourceIdentity.getRemoteId());
       return Response.ok("question deleted").build();
     } catch (Exception e) {
-      LOG.error("An error occured when trying to delete Poll {}", id, e);
+      LOG.error("An error occured when trying to delete Poll {}", idquestion, e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
   }
+  //delete question
   @DELETE
   @Path("responses/{id}")
-  public Response delete(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+  public Response deleteresponses(@Context UriInfo uriInfo, @PathParam("idresponse") Long idresponse) throws Exception {
     Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
     if (sourceIdentity == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      ResponseEntity responseEntity = pollsManagementService.getResponseById(id);
+      ResponseEntity responseEntity = pollsManagementService.getResponseById(idresponse);
       if (responseEntity == null) {
-        return Response.status(Response.Status.NOT_FOUND).entity("response not found").build();
+        return Response.status(Response.Status.NOT_FOUND).entity("Response not found").build();
       }
       pollsManagementService.deleteResponse(responseEntity);
-      LOG.info("Response {} deleted by {}", id, sourceIdentity.getRemoteId());
+
+      LOG.info("Question {} deleted by {}", idresponse, sourceIdentity.getRemoteId());
       return Response.ok("response deleted").build();
     } catch (Exception e) {
-      LOG.error("An error occured when trying to delete Response {}", id, e);
+      LOG.error("An error occured when trying to delete Poll {}", idresponse, e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
   }
 
+
+  //update poll
   @PUT
   @Path("polls")
   @Consumes(MediaType.APPLICATION_JSON)

@@ -1,17 +1,18 @@
 package org.exoplatform.polls.services;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.exoplatform.polls.dao.PollDAO;
 import org.exoplatform.polls.dao.QuestionDAO;
 import org.exoplatform.polls.dao.ResponseDAO;
-import org.exoplatform.polls.dto.PollDTO;
-import org.exoplatform.polls.dto.QuestionDTO;
-import org.exoplatform.polls.dto.ResponseDTO;
+import org.exoplatform.polls.dao.UserResponseDAO;
+import org.exoplatform.polls.dto.*;
 import org.exoplatform.polls.entity.PollEntity;
 import org.exoplatform.polls.entity.QuestionEntity;
 import org.exoplatform.polls.entity.ResponseEntity;
@@ -28,8 +29,10 @@ public class PollsManagementService {
     private ResponseEntity responseEntity;
     private SimpleDateFormat formatter  = new SimpleDateFormat("yyyy-mm-dd");
 
-    public PollsManagementService(PollDAO pollDAO) {
+    public PollsManagementService(PollDAO pollDAO, QuestionDAO questionDAO, ResponseDAO responseDAO) {
         this.pollDAO = pollDAO;
+        this.questionDAO = questionDAO;
+        this.responseDAO = responseDAO;
     }
 
     public List<PollDTO> getPolls() {
@@ -47,20 +50,30 @@ public class PollsManagementService {
 
 
 
-    public PollDTO addPolls(PollDTO pollDTO) {
+    public PollDTO addPolls(PollDetails pollDetails, String userName) {
+        PollEntity pollEntity = null;
         try {
-            pollDTO.setCreatedDate(formatter.parse(pollDTO.getCreatedDateFormatted()));
-            pollDTO.setPublicationDate(formatter.parse(pollDTO.getPublicationDateFormatted()));
-            pollDTO.setExpirationDate(formatter.parse(pollDTO.getExpirationDateFormatted()));
-
-        } catch (ParseException e) {
+            pollEntity = new PollEntity(pollDetails.getPoll().getName(), userName, pollDetails.getPoll().getDescription(), formatter.parse(pollDetails.getPoll().getCreatedDateFormatted()), formatter.parse(pollDetails.getPoll().getPublicationDateFormatted()), formatter.parse(pollDetails.getPoll().getExpirationDateFormatted()), true );
+            pollEntity = pollDAO.create(pollEntity);
+            for (Question_Resoponses question : pollDetails.getQuestions()){
+                QuestionEntity questionEntity = toQuestionEntity(question.getQuestion());
+                questionEntity.setPollEntity(pollEntity);
+                questionEntity = questionDAO.create(questionEntity);
+                for(ResponseDTO responseDTO : question.getResponses()){
+                    ResponseEntity responseEntity = toResponseEntity(responseDTO);
+                    responseEntity.setQuestionEntity(questionEntity);
+                    responseDAO.create(responseEntity);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return toPollDTO(pollDAO.create(toPollEntity(pollDTO)));
+        return toPollDTO(pollEntity);
 
 
     }
+
     //question_add
     public QuestionDTO addQuestion(QuestionDTO questionDTO) {
 
@@ -102,7 +115,7 @@ public class PollsManagementService {
 
     }
 
-    //response
+    //response_delete_and_update
     public void deleteResponse(ResponseEntity responseEntityEntity) {
         responseDAO.delete(responseEntityEntity);
     }
@@ -201,6 +214,45 @@ public class PollsManagementService {
         return question ;
     }
 
+/*
+    public List<? extends Serializable> getQuestions() {
+
+            List<QuestionEntity> questionEntities= questionDAO.findAll();
+            if (questionEntities != null) {
+                return toQuestionDTOList(questionEntities);
+
+            }
+
+        return new ArrayList<>();
+    }
+
+    private List<ResponseDTO> toQuestionDTOList(List<QuestionEntity> responses) {
+        List<ResponseDTO> questionDTOS = new ArrayList<>();
+
+        for (ResponseEntity QuestionEntity : questionEntities) {
+        questionDTOS.add(toResponseDTO(QuestionEntity));
+        }
+        return questionDTOS;
+    }
 
 
+    public List<ResponseDTO> getResponses() {
+
+        List<QuestionEntity> responseEntities= questionDAO.findAll();
+        if (questionEntities != null) {
+            return toQuestionDTOList(questionEntities);
+
+        }
+
+        return new ArrayList<>();
+    }
+
+    private List<ResponseDTO> toResponseDTOList(List<ResponseEntity> responses) {
+        List<ResponseDTO> responseDTOS = new ArrayList<>();
+
+        for (ResponseEntity PollEntity : responseEntities) {
+          responseDTOS.add(toResponseDTO(ResponseEntity));
+        }
+        return responseDTOS;
+    }*/
 }

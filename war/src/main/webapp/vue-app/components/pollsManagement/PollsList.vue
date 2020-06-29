@@ -1,11 +1,21 @@
 <template>
   <div>
             <v-card v-if="!showAdd">
+
+                <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
                 <v-data-table
                   :headers="headers"
                   :items="polls"
                   sort-by="datecre"
                   class="elevation-1"
+                  :search="search"
+
                 >
                   <template v-slot:item.etat="{ item }">
                     <v-switch v-model="item.etat"></v-switch>
@@ -29,7 +39,7 @@
                   </template>
                 </v-data-table>
             </v-card>
-            <add-poll  v-if="showAdd" />
+            <AddPoll    v-if="showAdd" ></AddPoll>
     </div>
 </template>
 <script>
@@ -38,8 +48,16 @@ export default {
       components: {
         AddPoll,
     },
+   props: {
+    showAdd: {
+      type: Boolean,
+      required: true,
+      default: null,
+    }
+   },
  
   data: (vm) => ({
+    search:'',
     showAdd:false,
     loaded: false,
     chartdata: null,
@@ -83,8 +101,10 @@ export default {
     this.initialize();
   },
 
+
   methods: {
     initialize() {
+       
       fetch(`/portal/rest/pollsmanagement/polls`, {
                     credentials: 'include',
                 })
@@ -92,16 +112,23 @@ export default {
                 .then((resp) => {
                     this.polls = resp;
                 });
+         
     },
+      
 
     deleteItem(item) {
       const index = this.polls.indexOf(item);
+        fetch(`/portal/rest/pollsmanagement/polls/${item.id}`, {
+                     credentials: 'include',
+                      method: 'DELETE'
+                });
       //confirm('Are you sure you want to delete this item?') && this.polls.splice(index, 1);
     },
-
+   
     showAddForm() {
       this.showAdd = !this.showAdd;
     },
+ 
   },
 
 };

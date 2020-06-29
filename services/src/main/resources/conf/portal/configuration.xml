@@ -9,7 +9,13 @@
     <component>
         <type>org.exoplatform.polls.dao.PollDAO</type>
     </component>
-   
+       <component>
+        <type>org.exoplatform.polls.dao.QuestionDAO</type>
+    </component>
+       <component>
+        <type>org.exoplatform.polls.dao.ResponseDAO</type>
+    </component>
+
 
     <component>
         <type>org.exoplatform.polls.services.PollsManagementService</type>

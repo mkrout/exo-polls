@@ -73,6 +73,29 @@
     <changeSet author="exo-polls" id="1.0.0-6" dbms="postgresql">
         <createSequence sequenceName="SEQ_ADDONS_POLL_QUESTION_ID" startValue="1"/>
     </changeSet>
+
+    <changeSet author="exo-polls" id="1.0.0-7">
+        <createTable tableName="ADDONS_POLL_USER_RESPONSE">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_USER_RESPONSE"/>
+            </column>
+            <column name="USER_NAME" type="NVARCHAR(256)">
+            </column>
+            <column name="POLL_QUESTION_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_POLL_USER_RESPONSE_QUESTION"
+                             references="ADDONS_POLL_QUESTION(ID)"/>
+            </column>
+            <column name="POLL_RESPONSE_ID" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="FK_POLL_USER_RESPONSE"
+                             references="ADDONS_POLL_RESPONSE(ID)"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="exo-polls" id="1.0.0-8" dbms="postgresql">
+        <createSequence sequenceName="SEQ_ADDONS_POLL_USER_RESPONSE_ID" startValue="1"/>
+    </changeSet>
 </databaseChangeLog>
 
 
