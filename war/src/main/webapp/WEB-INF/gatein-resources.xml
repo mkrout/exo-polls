@@ -52,7 +52,36 @@
             <module>vuetify</module>
         </depends>
         <depends>
-            <module>taskDrawer</module>
+            <module>eXoVueI18n</module>
+        </depends>
+
+    </module>
+
+    <portlet>
+        <name>polls</name>
+        <module>
+            <depends>
+                <module>pollsjs</module>
+            </depends>
+        </module>
+    </portlet>
+
+
+    <module>
+        <name>pollsjs</name>
+        <script>
+            <minify>false</minify>
+            <path>/js/polls.bundle.js</path>
+        </script>
+        <depends>
+            <module>commonVueComponents</module>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
+        <depends>
+            <module>vuetify</module>
         </depends>
         <depends>
             <module>eXoVueI18n</module>

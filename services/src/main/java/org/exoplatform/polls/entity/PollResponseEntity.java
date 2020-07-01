@@ -6,11 +6,14 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity(name = "ResponseEntity")
+@Entity(name = "PollResponseEntity")
 @ExoEntity
 @Table(name = "ADDONS_POLL_RESPONSE")
 @Data
-public class ResponseEntity implements Serializable {
+@NamedQueries({
+        @NamedQuery(name = "PollResponseEntity.getResponsesByQuestion", query = "SELECT response FROM PollResponseEntity response where response.questionEntity.id = :id ") })
+
+public class PollResponseEntity implements Serializable {
 
     @Id
     @SequenceGenerator(name = "SEQ_ADDONS_POLL_RESPONSE_ID", sequenceName = "SEQ_ADDONS_POLL_RESPONSE_ID")
@@ -24,10 +27,10 @@ public class ResponseEntity implements Serializable {
     @JoinColumn(name = "POLL_QUESTION_ID")
     private QuestionEntity questionEntity;
 
-    public ResponseEntity() {
+    public PollResponseEntity() {
     }
 
-    public ResponseEntity(String response) {
+    public PollResponseEntity(String response) {
         this.response = response;
     }
 }

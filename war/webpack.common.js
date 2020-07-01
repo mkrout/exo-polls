@@ -46,7 +46,8 @@ const config = {
         jquery: '$'
     },
     plugins: [
-        new ExtractTextWebpackPlugin('css/pollsManagement.css')
+        new ExtractTextWebpackPlugin('css/pollsManagement.css'),
+        new ExtractTextWebpackPlugin('css/polls.css')
     ]
 
 };

@@ -17,7 +17,8 @@ const config = merge(webpackCommonConfig, {
         }]
     },
     entry: {
-        pollsManagement: './src/main/webapp/vue-app/pollsManagement.js'
+        pollsManagement: './src/main/webapp/vue-app/pollsManagement.js',
+        polls: './src/main/webapp/vue-app/polls.js'
 
     },
     output: {

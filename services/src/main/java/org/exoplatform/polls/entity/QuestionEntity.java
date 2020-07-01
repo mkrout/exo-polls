@@ -12,6 +12,9 @@ import java.util.Date;
 @ExoEntity
 @Table(name = "ADDONS_POLL_QUESTION")
 @Data
+@NamedQueries({
+        @NamedQuery(name = "QuestionEntity.getQuestionsByPoll", query = "SELECT question FROM QuestionEntity question where question.pollEntity.id = :id ") })
+
 public class QuestionEntity implements Serializable {
 
     @Id

@@ -24,4 +24,23 @@
             <keywords>polls</keywords>
         </portlet-info>
     </portlet>
+    <portlet>
+        <portlet-name>polls</portlet-name>
+        <display-name xml:lang="EN">Polls Portlet</display-name>
+        <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+        <init-param>
+            <name>portlet-view-dispatched-file-path</name>
+            <value>/polls.html</value>
+        </init-param>
+        <expiration-cache>-1</expiration-cache>
+        <cache-scope>PUBLIC</cache-scope>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Polls</title>
+            <keywords>polls</keywords>
+        </portlet-info>
+    </portlet>
 </portlet-app>

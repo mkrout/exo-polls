@@ -1,7 +1,5 @@
 package org.exoplatform.polls.rest;
 
-import static org.exoplatform.polls.Utils.*;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,19 +12,15 @@ import javax.ws.rs.core.Response;
 
 import javax.ws.rs.core.UriInfo;
 
-import org.exoplatform.polls.dto.PollDTO;
-import org.exoplatform.polls.dto.PollDetails;
-import org.exoplatform.polls.dto.QuestionDTO;
-import org.exoplatform.polls.dto.ResponseDTO;
+import org.exoplatform.polls.dto.*;
 import org.exoplatform.polls.entity.PollEntity;
 import org.exoplatform.polls.entity.QuestionEntity;
-import org.exoplatform.polls.entity.ResponseEntity;
+import org.exoplatform.polls.entity.PollResponseEntity;
 import org.exoplatform.polls.services.PollsManagementService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 
-import io.swagger.jaxrs.PATCH;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.service.rest.Util;
@@ -65,6 +59,74 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+
+//get polls
+  @GET
+  @Path("polls/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getPollById(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+
+      PollEntity pollEntity = pollsManagementService.getPollById(id);
+      if(pollEntity ==null ){
+        return  Response.status(Response.Status.NOT_FOUND).build();
+      }
+      PollDetails pollDetails = new PollDetails();
+      pollDetails.setPoll(pollsManagementService.toPollDTO(pollEntity));
+      List<QuestionEntity> questionEntities = pollsManagementService.getQuestionsByPoll(pollEntity.getId());
+      List<Question_Resoponses> question_Resoponses= new ArrayList<Question_Resoponses>();
+      for(QuestionEntity questionEntity : questionEntities){
+        Question_Resoponses  question = new Question_Resoponses();
+        question.setQuestion(pollsManagementService.toQuestioDTO(questionEntity));
+        question.setResponses(pollsManagementService.getResponsesByQuestion(questionEntity.getId()));
+        question_Resoponses.add(question);
+      }
+
+      pollDetails.setQuestions(question_Resoponses);
+      return Response.ok(pollDetails).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get polls list", e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GET
+  @Path("responses/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getResponsesByPoll(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+
+      PollEntity pollEntity = pollsManagementService.getPollById(id);
+      if(pollEntity ==null ){
+        return  Response.status(Response.Status.NOT_FOUND).build();
+      }
+      PollDetails pollDetails = new PollDetails();
+      pollDetails.setPoll(pollsManagementService.toPollDTO(pollEntity));
+      List<QuestionEntity> questionEntities = pollsManagementService.getQuestionsByPoll(pollEntity.getId());
+      List<Question_Resoponses> question_Resoponses= new ArrayList<Question_Resoponses>();
+      for(QuestionEntity questionEntity : questionEntities){
+        Question_Resoponses  question = new Question_Resoponses();
+        question.setQuestion(pollsManagementService.toQuestioDTO(questionEntity));
+        question.setResponses(pollsManagementService.getResponsesByQuestion(questionEntity.getId()));
+        question_Resoponses.add(question);
+      }
+
+      pollDetails.setQuestions(question_Resoponses);
+      return Response.ok(pollDetails).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get polls list", e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
 
 /*
 
@@ -123,6 +185,42 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.ok("Poll added").build();
     } catch (Exception e) {
       LOG.error("An error occured when trying to add new poll {}", poll.getPoll().getName(), e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+
+  //add_response
+  @POST
+  @Path("userresponse")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addUserRespone(@Context UriInfo uriInfo, PollDetails poll) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      pollsManagementService.addUserResponse(poll,sourceIdentity.getRemoteId());
+      return Response.ok("Response added").build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to add new poll {}", poll.getPoll().getName(), e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+
+  @GET
+  @Path("userresponse/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getUserRespone(@Context UriInfo uriInfo, @PathParam("id") Long id) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      return Response.ok(pollsManagementService.getUserResponsesByPoll(id)).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get responses  for poll{}", id, e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
@@ -212,11 +310,11 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      ResponseEntity responseEntity = pollsManagementService.getResponseById(idresponse);
-      if (responseEntity == null) {
+      PollResponseEntity pollResponseEntity = pollsManagementService.getResponseById(idresponse);
+      if (pollResponseEntity == null) {
         return Response.status(Response.Status.NOT_FOUND).entity("Response not found").build();
       }
-      pollsManagementService.deleteResponse(responseEntity);
+      pollsManagementService.deleteResponse(pollResponseEntity);
 
       LOG.info("Question {} deleted by {}", idresponse, sourceIdentity.getRemoteId());
       return Response.ok("response deleted").build();

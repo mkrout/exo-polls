@@ -5,9 +5,14 @@
     <priority>1</priority>
     <page-nodes>
         <node>
+            <name>polls-management</name>
+            <label>Polls managements</label>
+            <page-reference>portal::global::polls_management</page-reference>
+        </node>
+        <node>
             <name>polls</name>
             <label>Polls</label>
-            <page-reference>portal::global::polls_management</page-reference>
+            <page-reference>portal::global::polls</page-reference>
         </node>
     </page-nodes>
 </node-navigation>

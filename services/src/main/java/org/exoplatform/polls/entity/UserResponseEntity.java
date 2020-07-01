@@ -6,10 +6,13 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity(name = "ResponseEntity")
+@Entity(name = "UserResponseEntity")
 @ExoEntity
-@Table(name = "ADDONS_POLL_RESPONSE")
+@Table(name = "ADDONS_POLL_USER_RESPONSE")
 @Data
+@NamedQueries({
+        @NamedQuery(name = "UserResponseEntity.getResponsesByPoll", query = "SELECT response FROM UserResponseEntity response where response.pollEntity.id = :id ") })
+
 public class UserResponseEntity implements Serializable {
 
     @Id
@@ -21,22 +24,24 @@ public class UserResponseEntity implements Serializable {
     @Column(name = "USER_NAME")
     protected String userName;
 
-    @Column(name = "COMMENT")
-    protected String COMMENT;
     @ManyToOne
     @JoinColumn(name = "POLL_QUESTION_ID")
     private QuestionEntity questionEntity;
     @ManyToOne
     @JoinColumn(name = "POLL_RESPONSE_ID")
-    private ResponseEntity responseEntity;
+    private PollResponseEntity pollResponseEntity;
+    @ManyToOne
+    @JoinColumn(name = "POLL_POLL_ID")
+    private PollEntity pollEntity;
 
     public UserResponseEntity() {
     }
 
-    public UserResponseEntity(String userName,QuestionEntity questionEntity,  ResponseEntity responseEntity) {
+    public UserResponseEntity(String userName,QuestionEntity questionEntity,  PollResponseEntity pollResponseEntity,  PollEntity pollEntity) {
         this.userName = userName;
         this.questionEntity = questionEntity;
-        this.responseEntity = responseEntity;
+        this.pollResponseEntity = pollResponseEntity;
+        this.pollEntity = pollEntity;
     }
 }
 

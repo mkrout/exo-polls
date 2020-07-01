@@ -16,6 +16,10 @@
         <type>org.exoplatform.polls.dao.ResponseDAO</type>
     </component>
 
+       <component>
+        <type>org.exoplatform.polls.dao.UserResponseDAO</type>
+    </component>
+
 
     <component>
         <type>org.exoplatform.polls.services.PollsManagementService</type>
