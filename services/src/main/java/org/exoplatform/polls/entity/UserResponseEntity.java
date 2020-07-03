@@ -13,7 +13,8 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name = "UserResponseEntity.getResponsesByPoll", query = "SELECT response FROM UserResponseEntity response where response.pollEntity.id = :id "),
         @NamedQuery(name = "UserResponseEntity.countResponsesByUserAndPoll", query = "SELECT COUNT(response.id) FROM UserResponseEntity response where response.pollEntity.id = :id And response.userName = :userName "),
-        @NamedQuery(name = "UserResponseEntity.countResponsesByPollAndQuestion", query = "select count(response) from UserResponseEntity response" + " WHERE response.pollEntity.id = :idPoll"  + " AND response.questionEntity.id = :idQuestion "+ " AND response.id = :idResponse "),
+
+
 })
 
 public class UserResponseEntity implements Serializable {
