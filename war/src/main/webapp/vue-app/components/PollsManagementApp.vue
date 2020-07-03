@@ -88,7 +88,6 @@ select {
     margin-top: 50px;
     margin-bottom: 60px;
 }
-
 .drawerHeader {
     position: fixed;
     top: 0;

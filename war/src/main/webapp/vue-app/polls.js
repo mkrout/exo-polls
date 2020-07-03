@@ -1,5 +1,9 @@
 import pollsApp from './components/PollsApp.vue';
+import Chartkick from 'vue-chartkick'
 import './../css/main.less';
+import Chart from 'chart.js'
+
+Vue.use(Chartkick.use(Chart))
 Vue.use(Vuetify);
 
 

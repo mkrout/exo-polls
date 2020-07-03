@@ -1,19 +1,11 @@
 <template>
-<exo-drawer ref="pollDrawer" right class="">
+<exo-drawer ref="pollDrawer" max-width="600px" right class="" >
     <template slot="title">
-        Poll
-    </template>
+        {{poll.poll.name}}
+    </template><br><br>
     <template slot="content">
-            <v-card class="mx-auto" max-width="1000" color="gray">
-  <v-footer padless>
-    <v-col
-      class="text-center"
-      cols="12"
-      color="primary"
-    >
-     <strong>{{poll.poll.name}}</strong>
-    </v-col>
-  </v-footer>
+            <v-card class="mx-auto" max-width="1500" color="gray">
+  
     <v-stepper v-model="e1" vertical>
     <div  v-for="(question,n) in poll.questions"   :key="question.id">
     <v-stepper-step :complete="e1 > n+1" :step="n+1">
@@ -34,17 +26,11 @@
     </v-stepper-content>
    </div>
 
-    <v-col cols="12" md="6">
-        <v-textarea
-          outlined
-          name="input-7-4"
-          label="Have you any comments ?"
-          value=""
-        ></v-textarea>
-      </v-col>
+   >
          <div class="text-center">
 
       <v-btn color="primary"  @click="save">Send</v-btn> 
+   <!-- <v-alert :value="alert" color="primary" dark transition="scale-transition"  > Response sent </v-alert> -->
 
       <v-btn  @click="lastStep(n)">Cancel</v-btn></div>
     </v-stepper>
@@ -65,6 +51,7 @@
     props: ['poll'],
     data () {
       return {
+        alert: true,
         steps:null,
         e1:1,
         e13: 1,

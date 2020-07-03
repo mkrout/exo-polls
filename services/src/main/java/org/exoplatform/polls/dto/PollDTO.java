@@ -18,4 +18,5 @@ public class PollDTO implements Serializable {
     private String publicationDateFormatted;
     private String expirationDateFormatted;
     private Boolean active;
+    private Boolean responded;
 }

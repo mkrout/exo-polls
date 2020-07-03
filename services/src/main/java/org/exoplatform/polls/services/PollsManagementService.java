@@ -38,13 +38,26 @@ public class PollsManagementService {
         this.userResponseDAO = userResponseDAO;
     }
 
-    public List<PollDTO> getPolls() {
+    public List<PollDTO> getPolls(String userName) {
         List<PollEntity> pollEntities = pollDAO.findAll();
         if (pollEntities != null) {
-            return toPollDTOList(pollEntities);
+            List<PollDTO> pollDTOS = new ArrayList<>();
+            for (PollEntity PollEntity : pollEntities) {
+                PollDTO poll = toPollDTO(PollEntity);
+                poll.setResponded(false);
+                if(userResponseDAO.countResponsesByUserAndPoll(poll.getId(),userName)>0){
+                    poll.setResponded(true);
+                }
+                pollDTOS.add(poll);
+            }
+            return pollDTOS;
         }
         return  new ArrayList<>();
 
+    }
+
+    public Long getCountResponseByPollAndQuestion(Long idPoll, Long idQuestion, Long idResponse) {
+        return userResponseDAO.countResponseByPollAndQuestionId(idPoll,idQuestion,idResponse);
     }
 
     public void addUserResponse(PollDetails pollDetails, String userName) {

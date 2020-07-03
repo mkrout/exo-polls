@@ -30,4 +30,20 @@ public class UserResponseDAO extends GenericDAOJPAImpl<UserResponseEntity, Long>
         }
     }
 
+    public Long countResponsesByUserAndPoll(Long id, String userName) {
+
+       return getEntityManager().createNamedQuery("UserResponseEntity.countResponsesByUserAndPoll", Long.class)
+                .setParameter("id", id).setParameter("userName", userName).getSingleResult();
+
+    }
+    public Long countResponseByPollAndQuestionId(Long idPoll, Long idQuestion, Long idResponse) {
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("UserResponseEntity.countResponsesByPollAndQuestion", Long.class);
+        query.setParameter("idPoll",idPoll);
+        query.setParameter("idQuestion",idQuestion);
+        query.setParameter("idResponse",idResponse);
+        Long count = query.getSingleResult();
+        return count == null ? 0 : count;
+
+    }
+
 }

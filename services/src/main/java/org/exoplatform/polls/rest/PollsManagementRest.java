@@ -53,7 +53,7 @@ public class PollsManagementRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      return Response.ok(pollsManagementService.getPolls()).build();
+      return Response.ok(pollsManagementService.getPolls(sourceIdentity.getRemoteId())).build();
     } catch (Exception e) {
       LOG.error("An error occured when trying to get polls list", e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -225,7 +225,23 @@ public class PollsManagementRest implements ResourceContainer {
     }
   }
 
-
+  @GET
+  @Path("responseNumber/{idPoll}/{idQuestion}/{idResponse}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getCountRespone(@Context UriInfo uriInfo, @PathParam("idPoll") Long idPoll,
+                                  @PathParam("idQuestion") Long idQuestion,
+                                  @PathParam("idResponse") Long idResponse) throws Exception {
+    Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
+    if (sourceIdentity == null) {
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+    try {
+      return Response.ok(pollsManagementService.getCountResponseByPollAndQuestion(idPoll, idQuestion,idResponse)).build();
+    } catch (Exception e) {
+      LOG.error("An error occured when trying to get responses  for poll{} and question {} and response {}", idPoll,idQuestion,idResponse, e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
 
   //add_question
   @POST
