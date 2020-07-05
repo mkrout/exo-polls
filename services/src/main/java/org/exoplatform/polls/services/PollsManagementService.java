@@ -60,6 +60,19 @@ public class PollsManagementService {
         return userResponseDAO.countResponseByPollAndQuestionId(idPoll,idQuestion,idResponse);
     }
 
+    public Long getPollresults(Long idPoll, Long idQuestion, Long idResponse) {
+        List<QuestionEntity> questionEntities = questionDAO.getQuestionsByPoll(idPoll);
+        for(QuestionEntity questionEntity : questionEntities){
+
+        }
+        return userResponseDAO.countResponseByPollAndQuestionId(idPoll,idQuestion,idResponse);
+    }
+
+    public  Long countResponsesByQuestionAndResponse(Long question, Long response)  {
+
+        return userResponseDAO.countResponsesByQuestionAndResponse(question,response);
+    }
+
     public void addUserResponse(PollDetails pollDetails, String userName) {
         try {
 

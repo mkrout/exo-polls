@@ -46,4 +46,11 @@ public class UserResponseDAO extends GenericDAOJPAImpl<UserResponseEntity, Long>
 
     }
 
+    public Long countResponsesByQuestionAndResponse(Long question, Long response) {
+
+        return getEntityManager().createNamedQuery("UserResponseEntity.countResponsesByQuestionAndResponse", Long.class)
+                .setParameter("question", question).setParameter("response", response).getSingleResult();
+
+    }
+
 }

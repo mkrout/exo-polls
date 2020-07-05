@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name = "UserResponseEntity.getResponsesByPoll", query = "SELECT response FROM UserResponseEntity response where response.pollEntity.id = :id "),
         @NamedQuery(name = "UserResponseEntity.countResponsesByUserAndPoll", query = "SELECT COUNT(response.id) FROM UserResponseEntity response where response.pollEntity.id = :id And response.userName = :userName "),
+        @NamedQuery(name = "UserResponseEntity.countResponsesByQuestionAndResponse", query = "SELECT COUNT(response.id) FROM UserResponseEntity response where response.questionEntity.id = :question And response.pollResponseEntity.id = :response "),
 
 
 })

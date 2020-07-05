@@ -15,59 +15,25 @@
       color="primary"
     >
                <strong>{{poll.name}}</strong></v-col>
-                <v-spacer></v-spacer>      <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
                 
                    <br><br>
                    </v-card-title><v-spacer></v-spacer>
-                <div >
+                 
                   
                   
-                  
-                    <div class="col-lg-8 col-md-8">
-                      <strong>{{Question.Qname}}</strong>
+                    <div v-for="(item, index) in results" :key="index" class="col-lg-8 col-md-8">
+                      <strong>{{item.question}}</strong>
                       <card type="chart" cardCol>
                         
                         <column-chart
-                          :data="[
-                          ['Response 1', 100],
-                          ['Response 2', 100],
-                          ['Response 3', 150],
-                          ['Response 4', 120],
-                          ]"
+                          :data="item.responses"
                         ></column-chart>
                         </card>
-                    </div>
-                    <div class="col-lg-8 col-md-8">
-                      <strong>{{Question.Qname}}</strong>
-                      <card type="chart" cardCol>
-                        
-                        <column-chart
-                          :data="[
-                          ['Response 1', 100],
-                          ['Response 2', 100],
-                          ['Response 3', 150],
-                          ['Response 4', 120],
-                          ]"
-                        ></column-chart>
-                        </card>
-                    </div>
-                    <div class="col-lg-8 col-md-8">
-                      <strong>{{Question.Qname}}</strong>
-                      <card type="chart" cardCol>
-                        
-                        <column-chart
-                          :data="[
-                          ['Response 1', 100],
-                          ['Response 2', 100],
-                          ['Response 3', 150],
-                          ['Response 4', 120],
-                          ]"
-                        ></column-chart>
-                        </card>
-                    </div>
+                
                     
                     <strong> Rapport de {{poll.name}} : </strong>
-                    <p> {{poll.name}} se découpe en {{Qnbr.Quesnbr}} questions</p>
+                    <p> {{poll.name}} se découpe en {{results.size}} questions</p>
                     
                 </div>
               </v-card>
@@ -85,7 +51,7 @@
 
 
   export default  {
-    props: ['poll'],
+    props: ['results','poll'],
     data () {
       return {
 
@@ -105,6 +71,8 @@
         open() {
             this.$refs.pollResultDrawer.open()
         },
+  
+        
        
     }
   }

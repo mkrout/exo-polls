@@ -24,6 +24,8 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.service.rest.Util;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Path("/pollsmanagement")
 @Produces(MediaType.APPLICATION_JSON)
@@ -226,19 +228,36 @@ public class PollsManagementRest implements ResourceContainer {
   }
 
   @GET
-  @Path("responseNumber/{idPoll}/{idQuestion}/{idResponse}")
+  @Path("responsenumber/{idPoll}")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getCountRespone(@Context UriInfo uriInfo, @PathParam("idPoll") Long idPoll,
-                                  @PathParam("idQuestion") Long idQuestion,
-                                  @PathParam("idResponse") Long idResponse) throws Exception {
+  public Response getCountRespone(@Context UriInfo uriInfo, @PathParam("idPoll") Long idPoll) throws Exception {
     Identity sourceIdentity = Util.getAuthenticatedUserIdentity(portalContainerName);
     if (sourceIdentity == null) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      return Response.ok(pollsManagementService.getCountResponseByPollAndQuestion(idPoll, idQuestion,idResponse)).build();
+      List<QuestionEntity> questionEntities = pollsManagementService.getQuestionsByPoll(idPoll);
+      JSONArray global = new JSONArray();
+      for(QuestionEntity questionEntity : questionEntities){
+        JSONArray responses = new JSONArray();
+        List<ResponseDTO> pollResponses = pollsManagementService.getResponsesByQuestion(questionEntity.getId());
+        for(ResponseDTO responseDTO : pollResponses){
+          JSONObject response = new JSONObject();
+          response.put("responseId",responseDTO.getId());
+          response.put("response",responseDTO.getResponse());
+          response.put("number",pollsManagementService.countResponsesByQuestionAndResponse(questionEntity.getId(),responseDTO.getId()));
+          responses.put(response);
+        }
+        JSONObject question = new JSONObject();
+        question.put("questionId",questionEntity.getId());
+        question.put("question",questionEntity.getQuestion());
+        question.put("responses",responses);
+        global.put(question);
+      }
+
+      return Response.ok(global.toString()).build();
     } catch (Exception e) {
-      LOG.error("An error occured when trying to get responses  for poll{} and question {} and response {}", idPoll,idQuestion,idResponse, e);
+      LOG.error("An error occured when trying to get responses  number", e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
